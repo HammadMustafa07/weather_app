@@ -7,13 +7,11 @@ async function getWeather() {
         return;
     }
 
-    const apiKey = process.env.WEATHER_API_KEY; // Your actual API key
-    const apiURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-
     try {
-        const response = await fetch(apiURL);
+        // Call the Vercel serverless function (API route)
+        const response = await fetch(`/api/weather?city=${city}`);
         if (!response.ok) {
-            throw new Error("City not found");
+            throw new Error("City not found or error fetching data");
         }
 
         const data = await response.json();
@@ -22,10 +20,10 @@ async function getWeather() {
         document.querySelector('.city').textContent = `${data.name}, ${data.sys.country}`;
         document.querySelector('.text').textContent = data.weather[0].description;
 
-        // Optional: Change image based on weather condition (e.g., clear, rain)
-        // const iconCode = data.weather[0].icon;
-        // const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
-        // document.querySelector('.description img').src = iconUrl;
+        // Optional: Change image based on weather condition
+        const iconCode = data.weather[0].icon;
+        const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+        document.querySelector('.description img').src = iconUrl;
 
         // Fill details
         document.querySelector('.feels-like').textContent = data.main.feels_like;
